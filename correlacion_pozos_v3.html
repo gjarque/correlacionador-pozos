@@ -222,7 +222,9 @@ canvas{display:block;touch-action:none}
     </button>
 
     <button onclick="removeSelectedWell()"
-      style="font-size:11px;padding:5px 11px;border:1px solid #374151;border-radius:5px;background:#1e293b;color:#f87171;cursor:pointer">🗑 Quitar</button>
+      style="font-size:11px;padding:5px 11px;border:1px solid #374151;border-radius:5px;background:#1e293b;color:#f87171;cursor:pointer">🗑 Quitar Pozos</button>
+    <button onclick="removeWellCoords()"
+      style="font-size:11px;padding:5px 11px;border:1px solid #374151;border-radius:5px;background:#1e293b;color:#f87171;cursor:pointer" title="Eliminar coordenadas CSV cargadas">📍 Quitar Coordenadas</button>
 
     <div id="fileStatus" style="display:none;font-size:11px;padding:3px 8px;background:#1f2937;border-radius:4px;color:#f1f5f9;max-width:340px"></div>
     <div style="width:1px;background:#1e293b;align-self:stretch;margin:0 2px"></div>
@@ -454,7 +456,7 @@ function showMarkerCompareDialog(wL, wR, conflicts, newResults, onReplace, onKee
       else {
         var srcM = wellMarkers[wL] && wellMarkers[wL].find(function(m){ return m.name===mName; });
         wellMarkers[wR].push({name:mName, depth:newMd,
-          win:srcM?srcM.win:50, sNeg:srcM?srcM.sNeg:150, sPos:srcM?srcM.sPos:150, notes:''});
+          win:srcM?srcM.win:65, sNeg:srcM?srcM.sNeg:150, sPos:srcM?srcM.sPos:150, notes:''});
       }
     });
     setTimeout(function(){ renderMarkerDataTable(); }, 150);
@@ -719,7 +721,7 @@ function processParsedWellBatch(parsedWells) {
 const CURVE_GROUPS = {
   SP:  { label:'SP / Potencial Espontáneo', patterns:/^SP$|^SP\d|SPAR|SPF|SPONT/i,  unitPatterns:/^MV$/i,    color:'#ef4444', isLog:false },
   GR:  { label:'GR / Gamma Ray',            patterns:/^GR$|^GR\d|CGR|SGR|GAPI|GAMMA/i, unitPatterns:/GAPI|API/i, color:'#22c55e', isLog:false },
-  RES: { label:'Resistividad',              patterns:/RT\b|ILD|LLD|M2RX|M2R9|RDEEP|RESD|RES\b|RILM|RILD/i, unitPatterns:/OHMM|OHM/i, color:'#f97316', isLog:true  },
+  RES: { label:'Resistividad',              patterns:/RT\b|(?<!C)ILD\b|LLD|M2RX|M2R9|RDEEP|RESD|RES\b|RILM|RILD/i, unitPatterns:/OHMM|OHM/i, color:'#f97316', isLog:true  },
   SON:  { label:'Sónica / DT',               patterns:/^DT$|^DTC|^DTS|^AC\b|SONIC|DTCO|DELT/i, unitPatterns:/US\/F|US\/M|USEC/i, color:'#a855f7', isLog:false },
   COND: { label:'Conductividad',              patterns:/^COND$|^CILD|^CILM|^CMSFL|^CSFLA|CONDUCT/i, unitPatterns:/MMHO|MS\/M|MHOS\/M|MSIEMEN/i, color:'#06b6d4', isLog:false },
 };
@@ -759,8 +761,10 @@ function showCurveSelectionDialog(wellName, onConfirm) {
 
   const classified = classifyWellCurves(wellName);
   const selected = {};
-  ['SP','GR','RES','SON'].forEach(function(g){
-    if(classified[g] && classified[g].length > 0) selected[g] = classified[g][0].name;
+  ['SP','GR','RES','SON','COND'].forEach(function(g){
+    if(classified[g] && classified[g].length > 0) {
+      selected[g] = classified[g][0].name;
+    }
   });
 
   
@@ -776,10 +780,10 @@ function showCurveSelectionDialog(wellName, onConfirm) {
   hdr.style.cssText = 'background:#0f172a;padding:14px 20px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:10px';
   hdr.innerHTML = '<span style="font-size:18px">📂</span>' +
     '<div><div style="font-weight:700;font-size:14px;color:#f1f5f9">'+wellName+'</div>' +
-    '<div style="font-size:11px;color:#94a3b8">Seleccioná hasta 4 curvas para visualizar</div></div>';
+    '<div style="font-size:11px;color:#94a3b8">Seleccioná hasta 5 curvas para visualizar</div></div>';
   const countBadge = document.createElement('div');
   countBadge.style.cssText = 'margin-left:auto;background:#1e3a5f;color:#60a5fa;padding:4px 10px;border-radius:5px;font-size:12px;font-weight:700';
-  function updateBadge(){ countBadge.textContent = Object.keys(selected).length + '/4 seleccionadas'; }
+  function updateBadge(){ countBadge.textContent = Object.keys(selected).length + '/5 seleccionadas'; }
   updateBadge();
   hdr.appendChild(countBadge);
   box.appendChild(hdr);
@@ -2403,7 +2407,7 @@ function onWellSelectionChange() {
           bestDepth = acc.md;
         }
       });
-      markers.push({name:m.name, depth:bestDepth, win:m.win||50, sNeg:m.sNeg||150, sPos:m.sPos||150});
+      markers.push({name:m.name, depth:bestDepth, win:m.win||65, sNeg:m.sNeg||150, sPos:m.sPos||150});
     });
   } else if(_newOrigin) {
     
@@ -2426,7 +2430,7 @@ function onWellSelectionChange() {
         }
       });
     }
-    var recParams = typeof getGlobalParams==='function' ? getGlobalParams() : {win:50,sNeg:150,sPos:150};
+    var recParams = typeof getGlobalParams==='function' ? getGlobalParams() : {win:65,sNeg:150,sPos:150};
     Object.entries(recovered).forEach(function(entry) {
       markers.push({name:entry[0], depth:entry[1], win:recParams.win, sNeg:recParams.sNeg, sPos:recParams.sPos});
     });
@@ -2485,6 +2489,9 @@ const CURVE_PRESETS = {
   M2R9:  { color:'#fb923c', scaleMin:0.2,  scaleMax:2000, isLog:true,  group:'RES' },
   SFL:   { color:'#fdba74', scaleMin:0.2,  scaleMax:2000, isLog:true,  group:'RES' },
   MSFL:  { color:'#fed7aa', scaleMin:0.2,  scaleMax:2000, isLog:true,  group:'RES' },
+  CILD:  { color:'#06b6d4', scaleMin:0,    scaleMax:1000, isLog:false, group:'COND' },
+  CILM:  { color:'#22d3ee', scaleMin:0,    scaleMax:1000, isLog:false, group:'COND' },
+  COND:  { color:'#06b6d4', scaleMin:0,    scaleMax:1000, isLog:false, group:'COND' },
   
   DT:    { color:'#a855f7', scaleMin:40,   scaleMax:140,  isLog:false, group:'SON' },
   DTC:   { color:'#9333ea', scaleMin:40,   scaleMax:140,  isLog:false, group:'SON' },
@@ -2558,7 +2565,8 @@ function makeDefaultTracks(wellName) {
 
 const MAX_TRACKS = 2;
 
-let correlTransform = 'log'; // 'log' | 'lin' | 'sqrt' | 'deriv'
+let correlTransform = 'log'; // 'log' | 'lin' | 'sqrt' | 'zscore' | 'zscore_local'
+let correlSmooth    = 0;    // smoothing window in meters (0 = no smoothing)
 
 let viewerConfig = [
   { group:'SP',  scaleMin:null, scaleMax:null, isLog:false, color:'#ef4444', fallback:'GR'  },
@@ -2761,7 +2769,7 @@ function syncAccumulatedResult(i) {
     var srcM = wellMarkers[wL] && wellMarkers[wL].find(function(m){ return m.name === mName_s; });
     wellMarkers[wR].push({
       name: mName_s, depth: newDepth_s,
-      win:  srcM ? srcM.win  : markers[i] ? markers[i].win  : 50,
+      win:  srcM ? srcM.win  : markers[i] ? markers[i].win  : 65,
       sNeg: srcM ? srcM.sNeg : markers[i] ? markers[i].sNeg : 150,
       sPos: srcM ? srcM.sPos : markers[i] ? markers[i].sPos : 150,
       notes: ''
@@ -3007,6 +3015,16 @@ function updateRoleHeaders() {
       ? markers.length+' marker'+(markers.length>1?'s':'')
       : '';
   }
+}
+
+function removeWellCoords() {
+  var count = Object.keys(_wellCoords).length;
+  if(count === 0) { alert('No hay coordenadas CSV cargadas.'); return; }
+  if(!confirm('¿Eliminar todas las coordenadas CSV cargadas? (' + count + ' pozos)\nLas coordenadas del encabezado LAS no se ven afectadas.')) return;
+  Object.keys(_wellCoords).forEach(function(k){ delete _wellCoords[k]; });
+  renderAll();
+  if(typeof updateMap === 'function') updateMap();
+  setFileStatus('ok', 'Coordenadas CSV eliminadas (' + count + ' pozos)');
 }
 
 function removeSelectedWell() {
@@ -3372,10 +3390,14 @@ function renderWell(wellName){
         const isActive = mi === activeIdx;
         if(!isActive) return; // only shade active marker
         const alpha = '44';
+        // Use per-marker values (updated by the marker row inputs)
+        const mWin  = m.win;
+        const mSNeg = m.sNeg;
+        const mSPos = m.sPos;
         if(isLeft_){
           
-          const yT = depthY(Math.max(dMin, m.depth - m.win), dMin, dMax);
-          const yB = depthY(Math.min(dMax, m.depth + m.win), dMin, dMax);
+          const yT = depthY(Math.max(dMin, m.depth - mWin), dMin, dMax);
+          const yB = depthY(Math.min(dMax, m.depth + mWin), dMin, dMax);
           ctx.fillStyle = col(mi) + alpha;
           ctx.fillRect(tLeft, yT, TRACK_W, yB-yT);
           if(isActive){
@@ -3390,18 +3412,18 @@ function renderWell(wellName){
             ctx.textAlign = 'left';
             
             if(yT > PAD.top + 2) {
-              ctx.fillText('-' + m.win + 'm', tLeft+3, yT+10);
+              ctx.fillText('-' + mWin + 'm', tLeft+3, yT+10);
             }
             
             if(yB < CANVAS_H - PAD.bot - 2) {
-              ctx.fillText('+' + m.win + 'm', tLeft+3, yB-3);
+              ctx.fillText('+' + mWin + 'm', tLeft+3, yB-3);
             }
             ctx.restore();
           }
         } else {
           
-          const yT = depthY(Math.max(dMin, m.depth - m.sNeg - m.win), dMin, dMax);
-          const yB = depthY(Math.min(dMax, m.depth + m.sPos + m.win), dMin, dMax);
+          const yT = depthY(Math.max(dMin, m.depth - mSNeg - mWin), dMin, dMax);
+          const yB = depthY(Math.min(dMax, m.depth + mSPos + mWin), dMin, dMax);
           ctx.fillStyle = col(mi) + alpha;
           ctx.fillRect(tLeft, yT, TRACK_W, yB-yT);
           if(isActive){
@@ -3415,10 +3437,10 @@ function renderWell(wellName){
             ctx.fillStyle = col(mi);
             ctx.textAlign = 'left';
             if(yT > PAD.top + 2) {
-              ctx.fillText('-' + (m.sNeg+m.win) + 'm', tLeft+3, yT+10);
+              ctx.fillText('-' + (mSNeg+mWin) + 'm', tLeft+3, yT+10);
             }
             if(yB < CANVAS_H - PAD.bot - 2) {
-              ctx.fillText('+' + (m.sPos+m.win) + 'm', tLeft+3, yB-3);
+              ctx.fillText('+' + (mSPos+mWin) + 'm', tLeft+3, yB-3);
             }
             ctx.restore();
           }
@@ -4804,7 +4826,7 @@ function correlate(idx){
       for(let i=1;i<arr.length-1;i++) out[i] = (arr[i+1]-arr[i-1])/(2*STEP);
       out[0]=out[1]; out[arr.length-1]=out[arr.length-2];
     } else if(mode === 'zscore') {
-      
+      // Global Z-score: μ and σ computed over the entire curve
       let sum=0, sum2=0, n=0;
       for(let i=0;i<arr.length;i++) { if(!isNaN(arr[i])&&isFinite(arr[i])){sum+=arr[i];sum2+=arr[i]*arr[i];n++;} }
       const mean = n>0 ? sum/n : 0;
@@ -4816,8 +4838,10 @@ function correlate(idx){
     }
     return out;
   }
-  const tArr728 = applyTransform(arr728, correlTransform);
-  const tArr729 = applyTransform(arr729, correlTransform);
+  const sArr728 = applySmoothing(arr728, correlSmooth);
+  const sArr729 = applySmoothing(arr729, correlSmooth);
+  const tArr728 = applyTransform(sArr728, correlTransform);
+  const tArr729 = applyTransform(sArr729, correlTransform);
   const template=Array.from(tArr728.slice(i0,i1));
   const sNS=Math.max(5, Math.floor(m.sNeg/STEP));
   const sPS=Math.max(5, Math.floor(m.sPos/STEP));
@@ -4842,8 +4866,10 @@ function correlate(idx){
   const curve2NameTgt = findEquivCurve(wTgt, curve2Name);
   const raw728b = curve2NameSrc ? (INTERP[wSrc]?.[curve2NameSrc] || null) : null;
   const raw729b = curve2NameTgt ? (INTERP[wTgt]?.[curve2NameTgt] || null) : null;
-  const tArr728b = raw728b ? applyTransform(raw728b, autoDetectTransform(curve2NameSrc)) : null;
-  const tArr729b = raw729b ? applyTransform(raw729b, autoDetectTransform(curve2NameTgt)) : null;
+  const sArr728b = raw728b ? applySmoothing(raw728b, correlSmooth) : null;
+  const sArr729b = raw729b ? applySmoothing(raw729b, correlSmooth) : null;
+  const tArr728b = sArr728b ? applyTransform(sArr728b, autoDetectTransform(curve2NameSrc)) : null;
+  const tArr729b = sArr729b ? applyTransform(sArr729b, autoDetectTransform(curve2NameTgt)) : null;
   const template2 = tArr728b ? Array.from(tArr728b.slice(i0,i1)) : null;
   const w1 = curve2Name ? (100 - correlCurve2Weight) / 100 : 1;
   const w2 = curve2Name ? correlCurve2Weight / 100 : 0;
@@ -4937,15 +4963,43 @@ function ccColor(cc){
   return `background:rgb(${r},${g},60);color:${fg};border-radius:4px;padding:2px 6px;`;
 }
 
+// Persistent global params — updated directly by inputs, never read from DOM
+var _globalParamCache = { win: 65, sNeg: 150, sPos: 150 };
+
+function updateGlobalParamCache() {
+  var gWin  = parseFloat((document.getElementById('gWin')  || {}).value);
+  var gSNeg = parseFloat((document.getElementById('gSNeg') || {}).value);
+  var gSPos = parseFloat((document.getElementById('gSPos') || {}).value);
+  if(!isNaN(gWin))  _globalParamCache.win  = Math.max(0, gWin);
+  if(!isNaN(gSNeg)) _globalParamCache.sNeg = Math.max(0, gSNeg);
+  if(!isNaN(gSPos)) _globalParamCache.sPos = Math.max(0, gSPos);
+}
+
+function setGlobalParam(key, val) {
+  var v = parseFloat(val);
+  if(!isNaN(v)) _globalParamCache[key] = Math.max(0, v);
+}
+function onGWinChange(v)  { setGlobalParam('win',  v); renderAll(); }
+function onSmoothWinChange(v) { correlSmooth = parseFloat(v) || 0; }
+
+function applySmoothing(arr, windowM) {
+  if(!arr || windowM <= 0) return arr;
+  const halfW = Math.max(1, Math.round(windowM / STEP / 2));
+  const out = new Float64Array(arr.length);
+  for(let i = 0; i < arr.length; i++) {
+    let sum = 0, n = 0;
+    for(let j = Math.max(0, i - halfW); j <= Math.min(arr.length - 1, i + halfW); j++) {
+      if(!isNaN(arr[j]) && isFinite(arr[j])) { sum += arr[j]; n++; }
+    }
+    out[i] = n > 0 ? sum / n : arr[i];
+  }
+  return out;
+}
+function onGSNegChange(v) { setGlobalParam('sNeg', v); renderAll(); }
+function onGSPosChange(v) { setGlobalParam('sPos', v); renderAll(); }
+
 function getGlobalParams(){
-  const gWin  = parseFloat(document.getElementById('gWin').value);
-  const gSNeg = parseFloat(document.getElementById('gSNeg').value);
-  const gSPos = parseFloat(document.getElementById('gSPos').value);
-  return{
-    win:  isNaN(gWin)  ? 50  : Math.max(0, gWin),
-    sNeg: isNaN(gSNeg) ? 150 : Math.max(0, gSNeg),
-    sPos: isNaN(gSPos) ? 150 : Math.max(0, gSPos),
-  };
+  return { win: _globalParamCache.win, sNeg: _globalParamCache.sNeg, sPos: _globalParamCache.sPos };
 }
 function applyGlobalToAll(){
   const{win,sNeg,sPos}=getGlobalParams();
@@ -5186,6 +5240,9 @@ function jumpPeakFor(idx,dir){
 function jumpPeak(dir){jumpPeakFor(activeIdx,dir);}
 
 function runOne(i){
+  // Apply global params to this marker before correlating
+  const _gp1 = getGlobalParams();
+  if(markers[i]) { markers[i].win=_gp1.win; markers[i].sNeg=_gp1.sNeg; markers[i].sPos=_gp1.sPos; }
   results[i]=correlate(i); activeIdx=i; ghostShifts[i]=0;
   renderMarkerBody(); renderResultsBar(); renderMarkerTabs(); renderAll();
   requestAnimationFrame(()=>drawCCPanel(i));
@@ -5231,7 +5288,7 @@ function runOne(i){
           else {
             var srcM = wellMarkers[wL_ro] && wellMarkers[wL_ro].find(function(m){ return m.name===mName_ro; });
             wellMarkers[wR_ro].push({name:mName_ro, depth:newData.md,
-              win:srcM?srcM.win:50, sNeg:srcM?srcM.sNeg:150, sPos:srcM?srcM.sPos:150, notes:''});
+              win:srcM?srcM.win:65, sNeg:srcM?srcM.sNeg:150, sPos:srcM?srcM.sPos:150, notes:''});
           }
           renderMarkerBody(); renderResultsBar(); renderAll();
           setTimeout(()=>{ renderMarkerDataTable(); if(_mapInitialized) renderMap(); else updateMap(); },50); markUnsaved(); setTimeout(autoSave,500);
@@ -5301,7 +5358,7 @@ function runOne(i){
         else {
           var srcMAuto = wellMarkers[wL_ro] && wellMarkers[wL_ro].find(function(m){ return m.name===mName_ro; });
           wellMarkers[wR_ro].push({name:mName_ro, depth:newData.md,
-            win:srcMAuto?srcMAuto.win:50, sNeg:srcMAuto?srcMAuto.sNeg:150, sPos:srcMAuto?srcMAuto.sPos:150, notes:''});
+            win:srcMAuto?srcMAuto.win:65, sNeg:srcMAuto?srcMAuto.sNeg:150, sPos:srcMAuto?srcMAuto.sPos:150, notes:''});
         }
         setTimeout(()=>{ renderMarkerDataTable(); if(_mapInitialized) renderMap(); else updateMap(); },50);
         markUnsaved(); setTimeout(autoSave,500);
@@ -5374,7 +5431,7 @@ function runAll(){
             else {
               var srcM2 = wellMarkers[wL_check] && wellMarkers[wL_check].find(function(m){ return m.name===mn; });
               wellMarkers[wR_check].push({name:mn, depth:entry.md,
-                win:srcM2?srcM2.win:50, sNeg:srcM2?srcM2.sNeg:150, sPos:srcM2?srcM2.sPos:150, notes:''});
+                win:srcM2?srcM2.win:65, sNeg:srcM2?srcM2.sNeg:150, sPos:srcM2?srcM2.sPos:150, notes:''});
             }
           }
         }
@@ -5702,7 +5759,8 @@ function buildProjectState() {
     accumulatedResults: JSON.parse(JSON.stringify(accumulatedResults)),
     wellMarkers: JSON.parse(JSON.stringify(wellMarkers)),
     faults: JSON.parse(JSON.stringify(faults)),
-    faultGapActive: JSON.parse(JSON.stringify(faultGapActive))
+    faultGapActive: JSON.parse(JSON.stringify(faultGapActive)),
+    wellCoords: JSON.parse(JSON.stringify(_wellCoords))
   };
 }
 
@@ -5720,13 +5778,13 @@ function restoreProjectState(state) {
     if(wL_restore && m.name && m.depth) {
       if(!wellMarkers[wL_restore]) wellMarkers[wL_restore] = [];
       if(!wellMarkers[wL_restore].find(function(wm){ return wm.name===m.name; })) {
-        wellMarkers[wL_restore].push({name:m.name, depth:m.depth, win:m.win||50, sNeg:m.sNeg||150, sPos:m.sPos||150});
+        wellMarkers[wL_restore].push({name:m.name, depth:m.depth, win:m.win||65, sNeg:m.sNeg||150, sPos:m.sPos||150});
       }
     }
     markers.push({
       name:  m.name  || ('M'+(i+1)),
       depth: m.depth || 0,
-      win:   m.win   || 50,
+      win:   m.win||65,
       sNeg:  m.sNeg  || 150,
       sPos:  m.sPos  || 150
     });
@@ -5770,10 +5828,27 @@ function restoreProjectState(state) {
     Object.keys(faultGapActive).forEach(function(k){ delete faultGapActive[k]; });
     Object.assign(faultGapActive, state.faultGapActive);
   }
+  if(state.wellCoords) {
+    Object.keys(_wellCoords).forEach(function(k){ delete _wellCoords[k]; });
+    Object.assign(_wellCoords, state.wellCoords);
+  }
 
   renderMarkerBody(); renderResultsBar(); renderMarkerTabs();
   renderMarkerDataTable();
   renderAll();
+}
+
+function saveProject() {
+  const state = buildProjectState();
+  const json  = JSON.stringify(state, null, 2);
+  const date  = new Date().toISOString().slice(0,10);
+  downloadText(json, 'correlacion_proyecto_' + date + '.json', 'application/json');
+  markSaved();
+}
+
+function loadProjectFile() {
+  const input = document.getElementById('projectFileInput');
+  if(input) input.click();
 }
 
 function handleProjectLoad(input) {
@@ -6032,7 +6107,7 @@ function updateAccDepth(origenWell, markerName, destinoWell, newDepth) {
       wellMarkers[destinoWell].push({
         name:  markerName,
         depth: newDepth,
-        win:   srcMarker ? srcMarker.win  : 50,
+        win:   srcMarker ? srcMarker.win  : 65,
         sNeg:  srcMarker ? srcMarker.sNeg : 150,
         sPos:  srcMarker ? srcMarker.sPos : 150,
         notes: ''
@@ -6352,7 +6427,7 @@ function importMarkersExcel(input) {
     var byWell={};
     rows.forEach(function(r){
       if(!byWell[r.well]) byWell[r.well]=[];
-      byWell[r.well].push({name:r.name,depth:r.md,win:50,sNeg:150,sPos:150});
+      byWell[r.well].push({name:r.name,depth:r.md,win:65,sNeg:150,sPos:150});
     });
 
     
@@ -6372,7 +6447,7 @@ function importMarkersExcel(input) {
             var acc = getAcc(prevOrigen, m.name, curOrigin);
             if(acc && acc.md && !isNaN(acc.md)) bestDepth2 = acc.md;
           });
-          markers.push({name:m.name,depth:bestDepth2,win:m.win||50,sNeg:m.sNeg||150,sPos:m.sPos||150});
+          markers.push({name:m.name,depth:bestDepth2,win:m.win||65,sNeg:m.sNeg||150,sPos:m.sPos||150});
         });
         activeIdx=0;
       }
@@ -6609,7 +6684,7 @@ function cancelCrossVal() {
           bestDepth = acc.md;
         }
       });
-      markers.push({name:m.name, depth:bestDepth, win:m.win||50, sNeg:m.sNeg||150, sPos:m.sPos||150});
+      markers.push({name:m.name, depth:bestDepth, win:m.win||65, sNeg:m.sNeg||150, sPos:m.sPos||150});
     });
   }
   activeIdx = 0;
@@ -7261,26 +7336,27 @@ const WIN_CONTENT = {
   parametros: `
     <div class="global-bar">
       <div style="font-size:11px;font-weight:600;color:#6366f1;align-self:center;white-space:nowrap">Aplicar a todos:</div>
-      <div class="ctrl-group"><label>Ventana ±(m)</label><input type="number" id="gWin" value="50" step="5" min="10" max="150" oninput="renderAll()"></div>
-      <div class="ctrl-group"><label>Búsq.−(m)</label><input type="number" id="gSNeg" value="150" step="10" min="0" max="400" oninput="renderAll()"></div>
-      <div class="ctrl-group"><label>Búsq.+(m)</label><input type="number" id="gSPos" value="150" step="10" min="0" max="400" oninput="renderAll()"></div>
+      <div class="ctrl-group"><label>Ventana ±(m)</label><input type="number" id="gWin" value="65" step="5" min="10" max="150" oninput="onGWinChange(this.value)"></div>
+      <div class="ctrl-group"><label>Búsq.−(m)</label><input type="number" id="gSNeg" value="150" step="10" min="0" max="400" oninput="onGSNegChange(this.value)"></div>
+      <div class="ctrl-group"><label>Búsq.+(m)</label><input type="number" id="gSPos" value="150" step="10" min="0" max="400" oninput="onGSPosChange(this.value)"></div>
       <button class="btn btn-apply" onclick="applyGlobalToAll()">↓ Todos</button>
       <button class="btn btn-run-all" onclick="runAll()">▶ Correlacionar todo</button>
     </div>
-    <div class="global-bar" style="background:#1e1b4b;border-bottom:1px solid #4338ca;padding:6px 14px;gap:10px;flex-wrap:wrap;align-items:center">
+    <div class="global-bar" style="background:#1e1b4b;border-bottom:1px solid #4338ca;padding:6px 14px;gap:8px;flex-wrap:nowrap;align-items:center;overflow-x:auto">
       <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap">Curva 1:</div>
       <select id="correlCurveSelect" onchange="setCorrelCurve(this.value)"
         style="background:#0f172a;color:#e2e8f0;border:1px solid #4338ca;border-radius:4px;padding:4px 8px;font-size:12px;font-weight:600;min-width:100px">
         <option value="">— elegir —</option>
       </select>
       <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap">Preprocesamiento:</div>
+      <label style="font-size:11px;color:#94a3b8;margin-right:4px">Suavizado (m):</label>
+      <input type="number" id="smoothWin" value="0" min="0" max="50" step="0.5" style="width:55px;padding:3px 5px;background:#0f172a;border:1px solid #334155;border-radius:4px;color:#e2e8f0;font-size:12px" oninput="onSmoothWinChange(this.value)" title="Media móvil previa a la transformación. 0 = sin suavizado">
       <select id="correlTransformSelect" onchange="setCorrelTransform(this.value)"
         style="background:#0f172a;color:#e2e8f0;border:1px solid #4338ca;border-radius:4px;padding:4px 8px;font-size:12px;font-weight:600">
         <option value="log">LOG — Atenúa picos altos</option>
         <option value="lin">LIN — picos grandes dominan</option>
         <option value="sqrt">√ Compresión suave</option>
-        <option value="deriv">d/dz Derivada — cambios de facies</option>
-        <option value="zscore">Z-score — Normalización local</option>
+        <option value="zscore">Z-score global — Normalización sobre toda la curva</option>
       </select>
       
       <span style="width:1px;background:#4338ca;height:18px;display:inline-block;margin:0 4px"></span>
@@ -7473,6 +7549,15 @@ const WM = {
     WM.focus(id);
     WM._updateTaskbar();
     if(id === 'mapa') setTimeout(function(){ if(typeof updateMap==='function') updateMap(); }, 100);
+    // Sync param inputs with current cache when parametros window opens
+    if(id === 'parametros') {
+      var elWin  = document.getElementById('gWin');
+      var elSNeg = document.getElementById('gSNeg');
+      var elSPos = document.getElementById('gSPos');
+      if(elWin)  elWin.value  = _globalParamCache.win;
+      if(elSNeg) elSNeg.value = _globalParamCache.sNeg;
+      if(elSPos) elSPos.value = _globalParamCache.sPos;
+    }
   },
 
   close(id) {
@@ -7635,6 +7720,16 @@ window.addEventListener('load', () => {
   });
 
   WM._updateTaskbar();
+
+  // Sync global param inputs with cache on startup
+  (function syncParamInputs() {
+    var elWin  = document.getElementById('gWin');
+    var elSNeg = document.getElementById('gSNeg');
+    var elSPos = document.getElementById('gSPos');
+    if(elWin)  elWin.value  = _globalParamCache.win;
+    if(elSNeg) elSNeg.value = _globalParamCache.sNeg;
+    if(elSPos) elSPos.value = _globalParamCache.sPos;
+  })();
 
   
   if (window.location.protocol === 'file:') {
