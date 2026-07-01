@@ -50,10 +50,10 @@ input[type=text]{width:88px;font-size:12px;padding:4px 7px;border:1px solid #cbd
 .res-shift{font-size:11px;color:#94a3b8}
 .no-results{font-size:12px;color:#64748b}
 /* Well panels */
-.well-panels-row{display:flex;gap:12px;padding:12px 20px;align-items:flex-start;overflow-x:auto;flex:1;min-height:0}
+.well-panels-row{display:flex;gap:12px;padding:12px 20px;align-items:stretch;overflow-x:auto;flex:1;min-height:0}
 .well-panel{background:#fff;border-radius:8px;border:1px solid #e2e8f0;overflow:hidden;min-width:0}
 .well-panel-title{background:#0f172a;color:#f1f5f9;padding:7px 12px;font-size:11px;font-weight:700;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
-.well-canvas-wrap{overflow-x:auto}
+.well-canvas-wrap{overflow-x:hidden;display:flex;flex:1}
 canvas{display:block;touch-action:none}
 .track-ctrl-panel{background:#0f172a;border-top:2px solid #334155;overflow-y:auto;max-height:240px}
 .track-ctrl-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px}
@@ -77,7 +77,7 @@ canvas{display:block;touch-action:none}
 #wm-desktop {
   position:relative;
   width:100%;
-  min-height:calc(100vh - 90px);
+  min-height:calc(100vh - 46px);
   overflow:visible;
   background:#1a1f2e;
   background-image: radial-gradient(circle at 1px 1px, #2a3040 1px, transparent 0);
@@ -128,30 +128,7 @@ canvas{display:block;touch-action:none}
   min-height:0;
 }
 
-/* ══ TASKBAR ══ */
-#wm-taskbar-bar {
-  background:#0f172a;
-  border-top:2px solid #6366f1;
-  padding:5px 16px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  height:46px;
-  position:fixed;
-  bottom:0;left:0;right:0;
-  z-index:99999;
-  box-shadow:0 -2px 12px rgba(0,0,0,.5);
-}
-.wm-task-btn {
-  font-size:12px;padding:5px 14px;border-radius:5px;
-  cursor:pointer;display:flex;align-items:center;gap:5px;
-  transition:all .15s;
-}
-.wm-task-btn:hover { border-color:#6366f1!important; }
-#wm-taskbar-bar .taskbar-label {
-  font-size:10px;font-weight:700;color:#475569;
-  text-transform:uppercase;letter-spacing:.5px;margin-right:4px;
-}
+
 
 /* ══ SCROLLBARS inside windows ══ */
 .wm-body::-webkit-scrollbar { width:6px;height:6px }
@@ -196,7 +173,7 @@ canvas{display:block;touch-action:none}
 </style>
 
 </head>
-<body style="margin:0;font-family:system-ui,sans-serif;background:#0f172a;color:#1e293b;padding-bottom:46px">
+<body style="margin:0;font-family:system-ui,sans-serif;background:#0f172a;color:#1e293b;padding-bottom:0">
 
 <!-- Top bar: file loader + project -->
 <div style="background:#0f172a;border-bottom:1px solid #1e293b">
@@ -240,24 +217,17 @@ canvas{display:block;touch-action:none}
     <button onclick="WM.open('mapa')"                title="Mapa de Ubicación"          style="font-size:14px;width:30px;height:30px;border:1px solid #374151;border-radius:5px;background:#1e293b;cursor:pointer">🌍</button>
     <button onclick="window.open('Manual_Correlacion_Pozos_v3.pdf','_blank')" title="Abrir instrucciones de uso"
       style="margin-left:auto;font-size:11px;padding:5px 14px;border:1px solid #334155;border-radius:5px;background:#1e293b;color:#94a3b8;cursor:pointer">📖 Instrucciones</button>
+    <span id="autoSaveInfo" style="font-size:10px;color:#64748b;margin-left:8px;white-space:nowrap"></span>
     <span id="autoSaveInfo" style="font-size:10px;color:#334155;margin-left:8px"></span>
   </div>
 </div>
 
-<div id="wm-workspace" style="position:relative;width:100%;height:calc(100vh - 90px)">
+<div id="wm-workspace" style="position:relative;width:100%;height:calc(100vh - 46px)">
   <div id="wm-desktop" style="position:absolute;inset:0;overflow:hidden"></div>
 </div>
 
-<!-- Taskbar (fixed bottom) -->
-<div id="wm-taskbar-bar">
-  <span class="taskbar-label">Ventanas:</span>
-  <div id="wm-taskbar" style="display:flex;gap:6px"></div>
-  <span id="autoSaveInfo" style="font-size:10px;color:#334155;margin-left:auto"></span>
-</div>
-
-
 </head>
-<body style="margin:0;font-family:system-ui,sans-serif;background:#0f172a;color:#1e293b;padding-bottom:46px">
+<body style="margin:0;font-family:system-ui,sans-serif;background:#0f172a;color:#1e293b;padding-bottom:0">
 
 <!-- Top bar: file loader + project -->
 
@@ -267,16 +237,10 @@ canvas{display:block;touch-action:none}
 <style>#dropZone.drag-over{border-color:#3b82f6!important;background:#1e3a5f;color:#93c5fd!important;}</style>
 
 <!-- Desktop workspace -->
-<div id="wm-workspace" style="position:relative;width:100%;height:calc(100vh - 90px)">
+<div id="wm-workspace" style="position:relative;width:100%;height:calc(100vh - 46px)">
   <div id="wm-desktop" style="position:absolute;inset:0;overflow:hidden"></div>
 </div>
 
-<!-- Taskbar (fixed bottom) -->
-<div id="wm-taskbar-bar">
-  <span class="taskbar-label">Ventanas:</span>
-  <div id="wm-taskbar" style="display:flex;gap:6px"></div>
-  <span id="autoSaveInfo" style="font-size:10px;color:#334155;margin-left:auto"></span>
-</div>
 <script>// v20250621-1
 let _wellMeta = {};
 let validatedMarkers = {}; // {markerIdx: true/false}
@@ -721,14 +685,19 @@ function processParsedWellBatch(parsedWells) {
 const CURVE_GROUPS = {
   SP:  { label:'SP / Potencial Espontáneo', patterns:/^SP$|^SP\d|SPAR|SPF|SPONT/i,  unitPatterns:/^MV$/i,    color:'#ef4444', isLog:false },
   GR:  { label:'GR / Gamma Ray',            patterns:/^GR$|^GR\d|CGR|SGR|GAPI|GAMMA/i, unitPatterns:/GAPI|API/i, color:'#22c55e', isLog:false },
-  RES: { label:'Resistividad',              patterns:/RT\b|(?<!C)ILD\b|LLD|M2RX|M2R9|RDEEP|RESD|RES\b|RILM|RILD/i, unitPatterns:/OHMM|OHM/i, color:'#f97316', isLog:true  },
+  RES: { label:'Resistividad',              patterns:/RT\b|(?<!C)ILD\b|LLD|M2RX|M2R9|RDEEP|RESD|RES\b|RILM|RILD|AT90\b|AHT90\b/i, unitPatterns:/OHMM|OHM[\-\.]M|OHM$/i, color:'#f97316', isLog:true  },
   SON:  { label:'Sónica / DT',               patterns:/^DT$|^DTC|^DTS|^AC\b|SONIC|DTCO|DELT/i, unitPatterns:/US\/F|US\/M|USEC/i, color:'#a855f7', isLog:false },
   COND: { label:'Conductividad',              patterns:/^COND$|^CILD|^CILM|^CMSFL|^CSFLA|CONDUCT/i, unitPatterns:/MMHO|MS\/M|MHOS\/M|MSIEMEN/i, color:'#06b6d4', isLog:false },
 };
 
+// Shallow investigation curves — excluded from RES group regardless of units
+const RES_SHALLOW_EXCLUDE = /^(AT|AHT)(10|20|30|60)\b/i;
+
 function detectCurveGroup(curveName, units) {
   for(const [group, cfg] of Object.entries(CURVE_GROUPS)) {
     if(cfg.patterns.test(curveName)) return group;
+    // For RES group: exclude shallow investigation curves even if units match
+    if(group === 'RES' && RES_SHALLOW_EXCLUDE.test(curveName)) continue;
     if(units && cfg.unitPatterns && cfg.unitPatterns.test(units)) return group;
   }
   return null;
@@ -3294,8 +3263,7 @@ function updateCanvasH() {
   if(!panels) return;
   var panelH = panels.offsetHeight;
   if(panelH > 200) {
-    
-    CANVAS_H = panelH - 80;
+    CANVAS_H = panelH - 40; // header + small padding only
   }
 }
 
@@ -5240,9 +5208,6 @@ function jumpPeakFor(idx,dir){
 function jumpPeak(dir){jumpPeakFor(activeIdx,dir);}
 
 function runOne(i){
-  // Apply global params to this marker before correlating
-  const _gp1 = getGlobalParams();
-  if(markers[i]) { markers[i].win=_gp1.win; markers[i].sNeg=_gp1.sNeg; markers[i].sPos=_gp1.sPos; }
   results[i]=correlate(i); activeIdx=i; ghostShifts[i]=0;
   renderMarkerBody(); renderResultsBar(); renderMarkerTabs(); renderAll();
   requestAnimationFrame(()=>drawCCPanel(i));
@@ -7116,17 +7081,19 @@ function renderMap() {
 
     const isOrigen  = name === wL;
     const isDestino = name === wR;
-    const color = isOrigen ? '#2563eb' : isDestino ? '#ea580c' : '#475569';
-    const ring  = isOrigen ? '#1e40af' : isDestino ? '#c2410c' : '#334155';
-    const size  = (isOrigen||isDestino) ? 12 : 8;
+    const hasLAS    = !!loadedWells[name];
+    const color = isOrigen ? '#2563eb' : isDestino ? '#ea580c' : (hasLAS ? '#475569' : '#94a3b8');
+    const ring  = isOrigen ? '#1e40af' : isDestino ? '#c2410c' : (hasLAS ? '#334155' : '#64748b');
+    const size  = (isOrigen||isDestino) ? 12 : (hasLAS ? 8 : 5);
 
-    
+    ctx.globalAlpha = hasLAS ? 1.0 : 0.55;
     ctx.shadowColor='rgba(0,0,0,0.3)'; ctx.shadowBlur=4;
     
     ctx.beginPath(); ctx.arc(p.x, p.y, size, 0, Math.PI*2);
     ctx.fillStyle = color; ctx.fill();
     ctx.strokeStyle = ring; ctx.lineWidth=2; ctx.stroke();
     ctx.shadowBlur=0;
+    ctx.globalAlpha = 1.0;
 
     
     if (isOrigen || isDestino) {
@@ -7280,7 +7247,7 @@ const WIN_CONTENT = {
         style="font-size:12px;padding:3px 9px;border:1px solid #4b5563;border-radius:5px;background:#374151;color:#f1f5f9;min-width:130px"></select>
       <div id="depthRangeInfo" style="font-size:10px;color:#64748b;margin-left:auto"></div>
     </div>
-    <div class="toggle-bar" style="padding:5px 10px;flex-wrap:nowrap;overflow-x:auto">
+    <div class="toggle-bar" style="padding:5px 10px;flex-wrap:wrap;overflow-x:hidden;gap:6px">
       <label><input type="checkbox" id="chkShowShading" checked onchange="renderAll()"> Sombreados</label>
       <div class="sep"></div>
       <label style="font-size:12px;color:#475569;font-weight:600">Profundidad:</label>
@@ -7301,7 +7268,7 @@ const WIN_CONTENT = {
             <div id="originShiftInfo" style="font-size:10px;color:#93c5fd"></div>
           </div>
         </div>
-        <div class="well-canvas-wrap"><canvas id="cvs_LEFT" height="520" style="cursor:default"></canvas></div>
+        <div class="well-canvas-wrap"><canvas id="cvs_LEFT" height="520" style="cursor:default;width:100%;height:100%;box-sizing:border-box"></canvas></div>
       </div>
       <div class="well-panel">
         <div class="well-panel-title" style="background:#3b1a1a;border-bottom:3px solid #f97316;padding:0">
@@ -7311,7 +7278,7 @@ const WIN_CONTENT = {
             <div id="destShiftInfo" style="font-size:11px;font-weight:600;color:#fdba74"></div>
           </div>
         </div>
-        <div class="well-canvas-wrap"><canvas id="cvs_RIGHT" height="520" style="cursor:default"></canvas></div>
+        <div class="well-canvas-wrap"><canvas id="cvs_RIGHT" height="520" style="cursor:default;width:100%;height:100%;box-sizing:border-box"></canvas></div>
       </div>
     </div>
     <div class="track-ctrl-panel" style="border-top:2px solid #334155;background:#0f172a;padding:0">
@@ -7319,14 +7286,14 @@ const WIN_CONTENT = {
            onclick="toggleTrackConfig()">
         <span style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px">⚙ Configuración de Registros</span>
         <span id="trackConfigToggle" style="font-size:12px;color:#6366f1;font-weight:700;margin-left:4px">▼</span>
-        <span style="font-size:10px;color:#475569;margin-left:auto">Click en ✕ para quitar • + para agregar</span>
+        <span id="trackConfigHint" style="font-size:10px;color:#ffffff;margin-left:auto;font-style:italic;letter-spacing:.2px">click para ocultar</span>
       </div>
       <div id="trackConfigBody" class="track-ctrls-row" style="display:flex;gap:0;overflow-x:auto">
-        <div class="track-ctrl-well" style="flex:1;min-width:280px;border-right:1px solid #334155">
+        <div class="track-ctrl-well" style="flex:1;min-width:180px;border-right:1px solid #334155">
           <div style="padding:4px 10px;background:#1e3a5f;font-size:10px;font-weight:700;color:#60a5fa;text-transform:uppercase;letter-spacing:.5px" id="trackLabelLeft">ORIGEN</div>
           <div id="trackCtrl_LEFT" style="padding:6px 8px"></div>
         </div>
-        <div class="track-ctrl-well" style="flex:1;min-width:280px">
+        <div class="track-ctrl-well" style="flex:1;min-width:180px">
           <div style="padding:4px 10px;background:#3b1a1a;font-size:10px;font-weight:700;color:#fb923c;text-transform:uppercase;letter-spacing:.5px" id="trackLabelRight">DESTINO</div>
           <div id="trackCtrl_RIGHT" style="padding:6px 8px"></div>
         </div>
@@ -7342,33 +7309,33 @@ const WIN_CONTENT = {
       <button class="btn btn-apply" onclick="applyGlobalToAll()">↓ Todos</button>
       <button class="btn btn-run-all" onclick="runAll()">▶ Correlacionar todo</button>
     </div>
-    <div class="global-bar" style="background:#1e1b4b;border-bottom:1px solid #4338ca;padding:6px 14px;gap:8px;flex-wrap:nowrap;align-items:center;overflow-x:auto">
-      <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap">Curva 1:</div>
+    <div class="global-bar" style="background:#1e1b4b;border-bottom:1px solid #4338ca;padding:4px 8px;gap:4px;flex-wrap:nowrap;align-items:center;overflow-x:hidden">
+      <div style="font-size:10px;font-weight:700;color:#6366f1;white-space:nowrap">C1:</div>
       <select id="correlCurveSelect" onchange="setCorrelCurve(this.value)"
-        style="background:#0f172a;color:#e2e8f0;border:1px solid #4338ca;border-radius:4px;padding:4px 8px;font-size:12px;font-weight:600;min-width:100px">
+        style="background:#0f172a;color:#e2e8f0;border:1px solid #4338ca;border-radius:4px;padding:2px 4px;font-size:11px;font-weight:600;min-width:80px">
         <option value="">— elegir —</option>
       </select>
-      <div style="font-size:10px;font-weight:700;color:#6366f1;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap">Preprocesamiento:</div>
-      <label style="font-size:11px;color:#94a3b8;margin-right:4px">Suavizado (m):</label>
-      <input type="number" id="smoothWin" value="0" min="0" max="50" step="0.5" style="width:55px;padding:3px 5px;background:#0f172a;border:1px solid #334155;border-radius:4px;color:#e2e8f0;font-size:12px" oninput="onSmoothWinChange(this.value)" title="Media móvil previa a la transformación. 0 = sin suavizado">
+      <div style="font-size:10px;font-weight:700;color:#6366f1;white-space:nowrap">Preproc:</div>
+      <label style="font-size:10px;color:#94a3b8;white-space:nowrap">Suav(m):</label>
+      <input type="number" id="smoothWin" value="0" min="0" max="50" step="0.5" style="width:44px;padding:2px 4px;background:#0f172a;border:1px solid #334155;border-radius:4px;color:#e2e8f0;font-size:12px" oninput="onSmoothWinChange(this.value)" title="Media móvil previa a la transformación. 0 = sin suavizado">
       <select id="correlTransformSelect" onchange="setCorrelTransform(this.value)"
-        style="background:#0f172a;color:#e2e8f0;border:1px solid #4338ca;border-radius:4px;padding:4px 8px;font-size:12px;font-weight:600">
+        style="background:#0f172a;color:#e2e8f0;border:1px solid #4338ca;border-radius:4px;padding:2px 4px;font-size:11px;font-weight:600;max-width:80px">
         <option value="log">LOG — Atenúa picos altos</option>
-        <option value="lin">LIN — picos grandes dominan</option>
-        <option value="sqrt">√ Compresión suave</option>
-        <option value="zscore">Z-score global — Normalización sobre toda la curva</option>
+        <option value="lin">LIN — Valores originales</option>
+        <option value="sqrt">√ — Compresión suave</option>
+        <option value="zscore">Z-score — Normalización global</option>
       </select>
       
       <span style="width:1px;background:#4338ca;height:18px;display:inline-block;margin:0 4px"></span>
-      <div style="font-size:10px;font-weight:700;color:#818cf8;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap">Curva 2:</div>
+      <div style="font-size:10px;font-weight:700;color:#818cf8;white-space:nowrap">C2:</div>
       <select id="correlCurve2Select" onchange="setCorrelCurve2(this.value)"
         style="background:#0f172a;color:#e2e8f0;border:1px solid #4338ca;border-radius:4px;padding:4px 8px;font-size:12px;min-width:100px">
         <option value="">— ninguna —</option>
       </select>
       <select id="correlDualModeSelect" onchange="setCorrelDualMode(this.value)"
         style="background:#0f172a;color:#e2e8f0;border:1px solid #4338ca;border-radius:4px;padding:4px 8px;font-size:12px">
-        <option value="weighted">Ponderada</option>
-        <option value="product">Media geométrica</option>
+        <option value="weighted">Pond.</option>
+        <option value="product">Geom.</option>
       </select>
       <span id="curve2WeightWrap" style="display:flex;align-items:center;gap:4px">
         <span id="curve2WeightLabel" style="font-size:11px;font-weight:600;color:#818cf8;white-space:nowrap">50%</span>
@@ -7465,7 +7432,8 @@ function toggleTrackConfig() {
   var isOpen = body.style.display !== 'none';
   body.style.display = isOpen ? 'none' : 'flex';
   if(arrow) arrow.textContent = isOpen ? '▶' : '▼';
-  
+  var hint = document.getElementById('trackConfigHint');
+  if(hint) hint.textContent = isOpen ? 'click para mostrar' : 'click para ocultar';
   setTimeout(function(){ renderAll(); }, 50);
 }
 
@@ -7641,7 +7609,7 @@ window.addEventListener('load', () => {
 
   const desktop = document.getElementById('wm-desktop');
   const dw = window.innerWidth;
-  const dh = window.innerHeight - 90; const topOffset = 44;
+  const dh = window.innerHeight - 50; const topOffset = 44;
 
   
   const winDefs = (function() {
